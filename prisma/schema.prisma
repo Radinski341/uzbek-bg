@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SlideEffect {
+   FADE 
+   SLIDE 
+}
+
+
+/** Admin auth */
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/** Template catalog (definitions) */
+model Template {
+  id          String          @id @default(uuid())
+  key         String          @unique      // e.g. "hero-dish"
+  name        String
+  description String?
+  fields      TemplateField[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  Banner Banner[]
+}
+
+model TemplateField {
+  id         String     @id @default(uuid())
+  template   Template   @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  templateId String
+  key        String
+  label      String
+  type       FieldType
+  required   Boolean    @default(false)
+  isArray    Boolean    @default(false)
+  order      Int        @default(0)
+  config     Json?
+
+  @@unique([templateId, key])
+}
+
+enum FieldType {
+  TEXT
+  NUMBER
+  IMAGE
+  RICHTEXT
+  BOOLEAN
+  SELECT
+  COLOR
+}
+
+/** Banner = instance of a template with data */
+model Banner {
+  id          String    @id @default(uuid())
+  template    Template  @relation(fields: [templateId], references: [id])
+  templateId  String
+  data        Json
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  SlideItem SlideItem[]
+}
+
+/** Slides kept for later use */
+model Slide {
+  id         String      @id @default(uuid())
+  name       String
+  speedMs    Int         @default(8000)
+  effect     SlideEffect @default(FADE)
+  version    Int         @default(1)
+  items      SlideItem[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model SlideItem {
+  id        String   @id @default(uuid())
+  slide     Slide    @relation(fields: [slideId], references: [id], onDelete: Cascade)
+  slideId   String
+  banner    Banner   @relation(fields: [bannerId], references: [id])
+  bannerId  String
+  order     Int
+}
+
+
