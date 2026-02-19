@@ -1,4 +1,6 @@
 # Restaurant TV Menu CMS
+<img width="1536" height="1024" alt="hero-mockup" src="https://github.com/user-attachments/assets/f619dafa-b6f9-4cdc-b409-cc191e396747" />
+<img width="1536" height="1024" alt="dish-of-day-mockup" src="https://github.com/user-attachments/assets/69ebaefe-aa3b-4e98-bfa7-c589be099a9b" />
 
 A production-oriented digital signage platform for restaurants to market products on in-store TVs.
 
